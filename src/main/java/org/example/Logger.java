@@ -11,19 +11,23 @@ public class Logger {
         this.path = path;
     }
 
-    public void log(String message) throws IOException {
+    public void log(String message) {
         synchronized (path) {
-            File file = new File(path);
-            FileWriter fw = new FileWriter(file, true);
+            try {
+                File file = new File(path);
+                FileWriter fw = new FileWriter(file, true);
 
-            Date now = new Date();
-            SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
-            String timestamp = dateFormatter.format(now);
+                Date now = new Date();
+                SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss");
+                String timestamp = dateFormatter.format(now);
 
-            message = String.format("[%s] [%s] %s\n", timestamp, Thread.currentThread().getName(), message);
-            fw.write(message);
-            System.out.print(message);
-            fw.close();
+                message = String.format("[%s] [%s] %s\n", timestamp, Thread.currentThread().getName(), message);
+                fw.write(message);
+                System.out.print(message);
+                fw.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

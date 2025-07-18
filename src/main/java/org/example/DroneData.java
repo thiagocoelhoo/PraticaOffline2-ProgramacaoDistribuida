@@ -26,11 +26,11 @@ public class DroneData {
                 .replace("}", "")
                 .replace("[", "")
                 .replace("]", "")
-                .replace("-", "")
-                .replace(",", "")
-                .replace(";", "")
-                .replace("#", "")
-                .replace("//", "");
+                .replace("-", " ")
+                .replace(",", " ")
+                .replace(";", " ")
+                .replace("#", " ")
+                .replace("//",  " ");
 
         List<String> valores = Arrays.asList(str.split("\\s"));
         List<Double> dados = valores.stream()
