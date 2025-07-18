@@ -5,12 +5,16 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DeliverCallback;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class UserRabbitMq {
     private String rabbitMqBroker;
     private String fila;
     private Logger logger;
+    private final List<String> mensagensRecebidas = new ArrayList<>();
+    private final int MAX_MENSAGENS = 10;
 
     public UserRabbitMq(String broker, String fila) {
         this.rabbitMqBroker = broker;
@@ -21,41 +25,51 @@ public class UserRabbitMq {
     public void run() throws Exception {
         ConnectionFactory fabrica = new ConnectionFactory();
         fabrica.setHost(rabbitMqBroker);
-        Connection connection = fabrica.newConnection();
-        Channel channel = connection.createChannel();
 
-        channel.queueDeclare(fila, false, false, false, null);
-        logger.log("Conectado ao RabbitMQ e aguardando mensagens na fila '" + fila + "'.");
+        try {
+            Connection connection = fabrica.newConnection();
+            Channel channel = connection.createChannel();
+            channel.queueDeclare(fila, false, false, false, null);
+            logger.log("Conectado ao RabbitMQ e aguardando mensagens na fila '" + fila + "'.");
 
-        DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-            String message = new String(delivery.getBody(), "UTF-8");
-            logger.log("Dados históricos recebidos: " + message);
-        };
-        channel.basicConsume(fila, true, deliverCallback, consumerTag -> { });
+            Object lock = new Object();
 
-        // Mantém a thread principal ativa
-        Thread.currentThread().join();
+            DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+                String message = new String(delivery.getBody(), "UTF-8");
+                mensagensRecebidas.add(message);
+                logger.log("Dados históricos recebidos: " + message);
 
-        // Fecha a conexão
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            try {
-                if (channel != null && channel.isOpen()) {
-                    channel.close();
+                if (mensagensRecebidas.size() >= MAX_MENSAGENS) {
+                    synchronized (lock) {
+                        lock.notify();
+                    }
                 }
-                if (connection != null && connection.isOpen()) {
-                    connection.close();
-                }
-                System.out.println("Conexão com RabbitMQ encerrada.");
-            } catch (Exception e) {
-                System.err.println("Erro ao encerrar recursos do RabbitMQ: " + e.getMessage());
+            };
+
+            channel.basicConsume(fila, true, deliverCallback, consumerTag -> { });
+
+            // Aguarda até que as mensagens sejam recebidas
+            synchronized (lock) {
+                lock.wait();
             }
-        }));
+
+            // Exibe o "dashboard" no terminal
+            System.out.println("\n==== DASHBOARD DE DADOS HISTÓRICOS ====");
+            for (int i = 0; i < mensagensRecebidas.size(); i++) {
+                System.out.printf("Mensagem %02d: %s%n", i + 1, mensagensRecebidas.get(i));
+            }
+            System.out.println("=======================================\n");
+
+        } catch (Exception e) {
+            logger.log("Erro ao consumir mensagens: " + e.getMessage());
+            throw e;
+        }
     }
 
     public static void main(String[] args) {
         Scanner s = new Scanner(System.in);
         String rabbitMqHost;
-        String fila = "climatic_data_history";
+        String fila = "drone_data_history";
 
         System.out.print("Host do RabbitMQ: ");
         rabbitMqHost = s.nextLine();

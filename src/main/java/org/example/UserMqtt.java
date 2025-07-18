@@ -9,19 +9,18 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
 public class UserMqtt {
-    private String mqttBroker;
+    private String mqttBroker = "tcp://broker.emqx.io:1883";
     private String clientId;
-    private MqttClient mqttClient;
-    private Scanner scanner;
+    private MqttClient mqttClient = null;
 
-    UserMqtt(String mqttBroker, String clientId) {
-        this.mqttBroker = mqttBroker;
-        this.clientId = clientId;
-        this.scanner = new Scanner(System.in);
+    UserMqtt() {
     }
 
     public void run() throws MqttException, InterruptedException {
+        Scanner scanner = new Scanner(System.in);
+
         MemoryPersistence persistence = new MemoryPersistence();
+        clientId = MqttClient.generateClientId();
         mqttClient = new MqttClient(mqttBroker, clientId, persistence);
         MqttConnectOptions connectOptions = new MqttConnectOptions();
         connectOptions.setCleanSession(true);
@@ -36,13 +35,14 @@ public class UserMqtt {
             System.out.println("2 - Receber dados em tempo real de uma região específica (Norte, Sul, Leste, Oeste)");
             System.out.println("3 - Sair");
             System.out.print("Opção: ");
+
             int option = scanner.nextInt();
             scanner.nextLine();
 
             String topic = "";
             switch (option) {
                 case 1:
-                    topic = "climatic_data/realtime";
+                    topic = "drone_data/realtime";
                     break;
 
                 case 2:
@@ -50,7 +50,7 @@ public class UserMqtt {
                     String region = scanner.nextLine().toLowerCase();
 
                     if (region.equals("norte") || region.equals("sul") || region.equals("leste") || region.equals("oeste")) {
-                        topic = "climatic_data/realtime/" + region;
+                        topic = "drone_data/realtime/" + region;
                     }
                     else {
                         System.out.println("Região inválida. Por favor, escolha entre Norte, Sul, Leste ou Oeste.");
@@ -85,17 +85,8 @@ public class UserMqtt {
 
     public static void main(String args[]) {
         Scanner s = new Scanner(System.in);
-        String mqttBroker;
-        String clientId;
-
-        System.out.print("URL do Broker MQTT: ");
-        mqttBroker = s.nextLine();
-
-        System.out.print("ID do cliente para o usuário MQTT: ");
-        clientId = s.nextLine();
-
         try {
-            UserMqtt client = new UserMqtt(mqttBroker, clientId);
+            UserMqtt client = new UserMqtt();
             client.run();
         } catch (MqttException | InterruptedException e) {
             e.printStackTrace();

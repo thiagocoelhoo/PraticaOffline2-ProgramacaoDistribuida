@@ -29,7 +29,7 @@ public class Gateway {
         this.logger = new Logger(String.format("%s_%s.log", Gateway.class.getName(), clientId));
     }
 
-    private String sendToDatabase(String message) throws Exception {
+    private String saveData(String message) throws Exception {
         Socket databaseSocket = new Socket(databaseIp, databasePort);
         DataOutputStream outStream = new DataOutputStream(databaseSocket.getOutputStream());
         DataInputStream inStream = new DataInputStream(databaseSocket.getInputStream());
@@ -64,17 +64,17 @@ public class Gateway {
                     data.pressao,
                     data.radiacao
             );
-            // sendToDatabase(processedData);
+             saveData(processedData);
 
             // Publicar dados via rabbitmq
-            rabbitMqChannel.basicPublish("", "climatic_data_history", null, processedData.getBytes());
+            rabbitMqChannel.basicPublish("", "drone_data", null, processedData.getBytes());
 
             // Publicar dados via mqtt
-            String topico = "climatic_data/realtime/" + regiao;
+            String topico = "drone_data/realtime/" + regiao;
             MqttMessage realTimeMessage = new MqttMessage(processedData.getBytes());
             realTimeMessage.setQos(1);
 
-            mqttClient.publish("climatic_data/realtime", realTimeMessage); // General topic
+            mqttClient.publish("drone_data/realtime", realTimeMessage); // General topic
             mqttClient.publish(topico, realTimeMessage); // Specific region topic
 
         } catch (Exception e) {
@@ -127,12 +127,10 @@ public class Gateway {
         factory.setHost(rabbitMqHost);
         Connection connection = factory.newConnection();
         rabbitMqChannel = connection.createChannel();
-        rabbitMqChannel.queueDeclare("climatic_data_history", false, false, false, null);
-        logger.log("Gateway connected to RabbitMQ.");
+        rabbitMqChannel.queueDeclare("drone_data_history", false, false, false, null);
     }
 
     public void run() throws Exception {
-        // initializeExecutorService();
         setupMqttClient();
         setupRabbitMq();
         logger.log("Gateway inicializado.");
@@ -145,7 +143,7 @@ public class Gateway {
 
     public static void main(String[] args) {
         String databaseIp = "localhost";
-        int databasePort = 8080;
+        int databasePort = 8000;
 
         Gateway gateway = new Gateway(databaseIp, databasePort);
         try {
