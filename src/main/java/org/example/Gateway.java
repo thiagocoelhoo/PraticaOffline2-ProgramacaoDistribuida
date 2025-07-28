@@ -1,15 +1,18 @@
 package org.example;
 
+import org.springframework.stereotype.Component;
+
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import org.eclipse.paho.client.mqttv3.*;
 import com.rabbitmq.client.Channel;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-
+import org.example.model.DroneData;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.net.Socket;
 
+@Component
 public class Gateway {
     public static String mqttBroker = "tcp://broker.emqx.io:1883";
     private String clientId;
@@ -26,6 +29,12 @@ public class Gateway {
     public Gateway(String databaseIp, int databasePort) {
         this.databaseIp = databaseIp;
         this.databasePort = databasePort;
+        this.logger = new Logger(String.format("%s_%s.log", Gateway.class.getName(), clientId));
+    }
+
+    public Gateway() {
+        this.databaseIp = "localhost";
+        this.databasePort = 8000;
         this.logger = new Logger(String.format("%s_%s.log", Gateway.class.getName(), clientId));
     }
 
@@ -53,18 +62,17 @@ public class Gateway {
         return response;
     }
 
-    private void processAndStoreData(String droneData, String regiao) {
+    public void processAndStoreData(String droneData, String regiao) {
         try {
             // Processar e armazenar no banco de dados
             DroneData data = DroneData.parse(droneData);
             String processedData = String.format(
                     "[%.2f | %.2f | %.2f | %.2f]",
-                    data.temperatura,
-                    data.umidade,
-                    data.pressao,
-                    data.radiacao
-            );
-             saveData(processedData);
+                    data.getTemperatura(),
+                    data.getUmidade(),
+                    data.getPressao(),
+                    data.getRadiacao());
+            saveData(processedData);
 
             // Publicar dados via rabbitmq
             rabbitMqChannel.basicPublish("", "drone_data", null, processedData.getBytes());

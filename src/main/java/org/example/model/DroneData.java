@@ -1,8 +1,13 @@
-package org.example;
+package org.example.model;
 
 import java.util.Arrays;
 import java.util.List;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class DroneData {
     // int droneId;
     double pressao;
@@ -30,7 +35,7 @@ public class DroneData {
                 .replace(",", " ")
                 .replace(";", " ")
                 .replace("#", " ")
-                .replace("//",  " ");
+                .replace("//", " ");
 
         List<String> valores = Arrays.asList(str.split("\\s"));
         List<Double> dados = valores.stream()

@@ -4,6 +4,8 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
+import org.example.model.DroneData;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.Scanner;
 
@@ -41,13 +43,17 @@ public class Drone {
         DroneData data = collectData();
         switch (regiao) {
             case NORTE:
-                return String.format("%f-%f-%f-%f", data.pressao, data.radiacao, data.temperatura, data.umidade);
+                return String.format("%f-%f-%f-%f", data.getPressao(), data.getRadiacao(), data.getTemperatura(),
+                        data.getUmidade());
             case SUL:
-                return String.format("(%f;%f;%f;%f)", data.pressao, data.radiacao, data.temperatura, data.umidade);
+                return String.format("(%f;%f;%f;%f)", data.getPressao(), data.getRadiacao(), data.getTemperatura(),
+                        data.getUmidade());
             case LESTE:
-                return String.format("{%f,%f,%f,%f}", data.pressao, data.radiacao, data.temperatura, data.umidade);
+                return String.format("{%f,%f,%f,%f}", data.getPressao(), data.getRadiacao(), data.getTemperatura(),
+                        data.getUmidade());
             case OESTE:
-                return String.format("%f#%f#%f#%f", data.pressao, data.radiacao, data.temperatura, data.umidade);
+                return String.format("%f#%f#%f#%f", data.getPressao(), data.getRadiacao(), data.getTemperatura(),
+                        data.getUmidade());
             default:
                 return "";
         }
@@ -64,15 +70,31 @@ public class Drone {
         }
     }
 
-    public void run() throws InterruptedException, MqttException {
+    private void sendDataRest() {
+        DroneData data = collectData();
+        RestTemplate restTemplate = new RestTemplate();
+        String gatewayUrl = "http://localhost:8080/drone-data"; // ajuste conforme necessário
+        try {
+            restTemplate.postForEntity(gatewayUrl, data, Void.class);
+            System.out.println("Dados enviados via REST para o Gateway.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void run(int modoEnvio) throws InterruptedException, MqttException {
         while (true) {
-            sendData();
-             Thread.sleep((long) Math.floor(2000 + Math.random() * 3000));
+            if (modoEnvio == 1) {
+                sendData();
+            } else {
+                sendDataRest();
+            }
+            Thread.sleep((long) Math.floor(2000 + Math.random() * 3000));
         }
         // client.disconnect();
     }
 
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
         Scanner s = new Scanner(System.in);
         String broker = "tcp://broker.emqx.io:1883";
 
@@ -104,14 +126,22 @@ public class Drone {
                 break;
             default: {
                 System.out.println("Região inválida.");
+                s.close();
                 return;
             }
         }
 
+        System.out.println("Escolha o modo de envio:");
+        System.out.println("1 - MQTT");
+        System.out.println("2 - REST");
+        int modoEnvio = s.nextInt();
+
         try {
-            drone.run();
+            drone.run(modoEnvio);
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            s.close();
         }
     }
 }

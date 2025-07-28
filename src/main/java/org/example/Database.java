@@ -10,7 +10,6 @@ import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-
 public class Database {
     private List<String> items;
     private Logger logger;
@@ -48,24 +47,25 @@ public class Database {
     }
 
     public void run(int port) throws Exception {
-        ServerSocket serverSocket = new ServerSocket(port);
         ExecutorService executor = Executors.newFixedThreadPool(10);
 
         logger.log(String.format("Banco de dados escutando na porta %d\n", port));
 
-        while (true) {
-            Socket clientSocket = serverSocket.accept();
-            executor.submit(() -> {
-                try {
-                    handleClient(clientSocket);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
+        try (ServerSocket serverSocket = new ServerSocket(port)) {
+            while (true) {
+                Socket clientSocket = serverSocket.accept();
+                executor.submit(() -> {
+                    try {
+                        handleClient(clientSocket);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
         }
     }
 
-    public static void main(String args[])  {
+    public static void main(String args[]) {
         Scanner s = new Scanner(System.in);
         int port;
 
@@ -79,5 +79,6 @@ public class Database {
             e.printStackTrace();
         }
 
+        s.close();
     }
 }

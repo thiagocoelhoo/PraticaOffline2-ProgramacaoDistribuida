@@ -39,3 +39,10 @@ build/
 
 
 paho*
+
+### Logs ###
+*.log
+
+
+### Others ###
+AGENTS.md
