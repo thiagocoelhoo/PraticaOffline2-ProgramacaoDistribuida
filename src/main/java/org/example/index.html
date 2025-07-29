@@ -258,7 +258,7 @@
             if (!mqttTabActive) return; // Só faz request se tab MQTT estiver ativa
             const statusContainer = document.getElementById('statusContainerMqtt');
             const statusElement = document.getElementById('statusMqtt');
-            const regioes = ['Norte', 'Sul', 'Leste', 'Oeste'];
+            const regioes = ['norte', 'sul', 'leste', 'oeste'];
             const allChecked = document.getElementById('regAllMqtt').checked;
             const filtros = allChecked ? regioes : regioes.filter(r => document.getElementById('reg'+r+'Mqtt').checked);
             let endpoint;
@@ -283,25 +283,25 @@
                 endpoint = API_BASE + '/api/drone-data/realtime/all';
                 fetch(endpoint)
                     .then(response => {
-                        if (response.status === 200) {
+                        if (response.status === 200 || response.status === 204) {
                             statusElement.textContent = 'Online';
                             statusContainer.style.backgroundColor = '#d4edda';
                             statusContainer.classList.remove('text-danger');
                             statusContainer.classList.add('text-success');
-                            return response.json();
+                            return response.status === 204 ? { content: { items: [] } } : response.json();
                         } else {
                             throw new Error('Erro na requisição');
                         }
                     })
                     .then(apiResponse => {
-                        if (apiResponse.err) {
+                        if (apiResponse && apiResponse.err) {
                             statusElement.textContent = 'Erro: ' + apiResponse.err;
                             statusContainer.style.backgroundColor = '#f8d7da';
                             statusContainer.classList.add('text-danger');
                             statusContainer.classList.remove('text-success');
                             return;
                         }
-                        const items = apiResponse.content.items || [];
+                        const items = apiResponse && apiResponse.content && apiResponse.content.items ? apiResponse.content.items : [];
                         const count = items.length;
                         document.getElementById('totalDadosMqtt').textContent = count;
                         // Totais por elemento
@@ -342,7 +342,8 @@
                         chartRadiacao.data.datasets[0].data = calcPercent(regiaoMap.Radiacao, totalRadiacao);
                         chartRadiacao.update();
                     })
-                    .catch(() => {
+                    .catch(error => {
+                        if (error.message !== 'Erro na requisição') return;
                         statusElement.textContent = 'Erro na conexão MQTT';
                         statusContainer.style.backgroundColor = '#f8d7da';
                         statusContainer.classList.add('text-danger');
@@ -352,17 +353,20 @@
                 // Requisições por região
                 let promessas = filtros.map(region => fetch(`${API_BASE}/api/drone-data/realtime/${region}`)
                     .then(response => {
-                        if (response.status === 200) {
+                        if (response.status === 200 || response.status === 204) {
                             statusElement.textContent = 'Online';
                             statusContainer.style.backgroundColor = '#d4edda';
                             statusContainer.classList.remove('text-danger');
                             statusContainer.classList.add('text-success');
-                            return response.json();
+                            return response.status === 204 ? { content: { items: [] } } : response.json();
                         } else {
                             throw new Error('Erro na requisição');
                         }
                     })
-                    .catch(() => null)
+                    .catch(error => {
+                        if (error.message !== 'Erro na requisição') return null;
+                        return null;
+                    })
                 );
                 Promise.all(promessas).then(respostas => {
                     // Filtra respostas válidas
@@ -426,7 +430,7 @@
         function syncAllCheckbox(tab) {
             const allId = tab === 'mqtt' ? 'regAllMqtt' : 'regAllRabbit';
             const prefix = tab === 'mqtt' ? 'reg' : 'reg';
-            const regioes = ['Norte', 'Sul', 'Leste', 'Oeste'];
+            const regioes = ['norte', 'sul', 'leste', 'oeste'];
             const allCb = document.getElementById(allId);
             const cbs = regioes.map(r => document.getElementById(prefix + r + (tab === 'mqtt' ? 'Mqtt' : 'Rabbit')));
             allCb.addEventListener('change', function() {
@@ -484,7 +488,7 @@
         function atualizarDashboardRabbit() {
             const statusContainer = document.getElementById('statusContainerRabbit');
             const statusElement = document.getElementById('statusRabbit');
-            const regioes = ['Norte', 'Sul', 'Leste', 'Oeste'];
+            const regioes = ['norte', 'sul', 'leste', 'oeste'];
             // Filtros selecionados
             const filtros = regioes.filter(r => document.getElementById('reg'+r+'Rabbit').checked);
             let endpoint;
@@ -513,25 +517,25 @@
                 endpoint = API_BASE + '/api/drone-data/history/all';
                 fetch(endpoint)
                     .then(response => {
-                        if (response.status === 200) {
+                        if (response.status === 200 || response.status === 204) {
                             statusElement.textContent = 'Online';
                             statusContainer.style.backgroundColor = '#d4edda';
                             statusContainer.classList.remove('text-danger');
                             statusContainer.classList.add('text-success');
-                            return response.json();
+                            return response.status === 204 ? { content: { items: [] } } : response.json();
                         } else {
                             throw new Error('Erro na requisição');
                         }
                     })
                     .then(apiResponse => {
-                        if (apiResponse.error) {
+                        if (apiResponse && apiResponse.error) {
                             statusElement.textContent = 'Erro: ' + apiResponse.error;
                             statusContainer.style.backgroundColor = '#f8d7da';
                             statusContainer.classList.add('text-danger');
                             statusContainer.classList.remove('text-success');
                             return;
                         }
-                        const items = apiResponse.content.items || [];
+                        const items = apiResponse && apiResponse.content && apiResponse.content.items ? apiResponse.content.items : [];
                         const count = items.length;
                         document.getElementById('totalDadosRabbit').textContent = count;
                         // Totais por elemento
@@ -578,7 +582,8 @@
                         chartRadHistoricoRabbit.data.datasets[0].data = historicoRadiacao;
                         chartRadHistoricoRabbit.update();
                     })
-                    .catch(() => {
+                    .catch(error => {
+                        if (error.message !== 'Erro na requisição') return;
                         statusElement.textContent = 'Erro na conexão RabbitMQ';
                         statusContainer.style.backgroundColor = '#f8d7da';
                         statusContainer.classList.add('text-danger');
@@ -588,17 +593,20 @@
                 // Requisições por região
                 let promessas = filtros.map(region => fetch(`${API_BASE}/api/drone-data/history/${region}`)
                     .then(response => {
-                        if (response.status === 200) {
+                        if (response.status === 200 || response.status === 204) {
                             statusElement.textContent = 'Online';
                             statusContainer.style.backgroundColor = '#d4edda';
                             statusContainer.classList.remove('text-danger');
                             statusContainer.classList.add('text-success');
-                            return response.json();
+                            return response.status === 204 ? { content: { items: [] } } : response.json();
                         } else {
                             throw new Error('Erro na requisição');
                         }
                     })
-                    .catch(() => null)
+                    .catch(error => {
+                        if (error.message !== 'Erro na requisição') return null;
+                        return null;
+                    })
                 );
                 Promise.all(promessas).then(respostas => {
                     // Filtra respostas válidas
