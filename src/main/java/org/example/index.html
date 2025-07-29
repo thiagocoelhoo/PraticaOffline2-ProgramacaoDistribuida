@@ -30,10 +30,13 @@
                 </div>
             </div>
         </div>
+        
         <div class="tab-content" id="dashboardTabsContent">
+            
+            <!-- Dashboard MQTT -->    
             <div class="tab-pane fade show active" id="mqtt" role="tabpanel" aria-labelledby="mqtt-tab">
                 <div class="row mb-4">
-                    <div class="col-md-3">
+                    <div class="col-3">
                         <div class="card text-center">
                             <div class="card-body">
                                 <h5 class="card-title">Total de Dados Coletados (MQTT)</h5>
@@ -41,20 +44,65 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-9">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Total por Elemento Climático (MQTT)</h5>
-                                <ul class="list-group list-group-flush">
-                                    <li class="list-group-item">Temperatura: <span id="totalTemperaturaMqtt">0</span></li>
-                                    <li class="list-group-item">Umidade: <span id="totalUmidadeMqtt">0</span></li>
-                                    <li class="list-group-item">Pressão: <span id="totalPressaoMqtt">0</span></li>
-                                    <li class="list-group-item">Radiação: <span id="totalRadiacaoMqtt">0</span></li>
-                                </ul>
+                    <div class="col-9">
+                        <h4>Dados climáticos por região</h4>
+                        <div class="row" id="regionalTotalsMqttContainer">
+                            <div class="col-md-3 mb-3">
+                                <div class="card text-center bg-light">
+                                    <div class="card-header">
+                                        Norte
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">Temperatura: <span id="temperaturaMqttNorte">0</span></p>
+                                        <p class="card-text">Umidade: <span id="umidadeMqttNorte">0</span></p>
+                                        <p class="card-text">Pressão: <span id="pressaoMqttNorte">0</span></p>
+                                        <p class="card-text">Radiação: <span id="radiacaoMqttNorte">0</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card text-center bg-light">
+                                    <div class="card-header">
+                                        Sul
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">Temperatura: <span id="temperaturaMqttSul">0</span></p>
+                                        <p class="card-text">Umidade: <span id="umidadeMqttSul">0</span></p>
+                                        <p class="card-text">Pressão: <span id="pressaoMqttSul">0</span></p>
+                                        <p class="card-text">Radiação: <span id="radiacaoMqttSul">0</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card text-center bg-light">
+                                    <div class="card-header">
+                                        Leste
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">Temperatura: <span id="temperaturaMqttLeste">0</span></p>
+                                        <p class="card-text">Umidade: <span id="umidadeMqttLeste">0</span></p>
+                                        <p class="card-text">Pressão: <span id="pressaoMqttLeste">0</span></p>
+                                        <p class="card-text">Radiação: <span id="radiacaoMqttLeste">0</span></p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <div class="card text-center bg-light">
+                                    <div class="card-header">
+                                        Oeste
+                                    </div>
+                                    <div class="card-body">
+                                        <p class="card-text">Temperatura: <span id="temperaturaMqttOeste">0</span></p>
+                                        <p class="card-text">Umidade: <span id="umidadeMqttOeste">0</span></p>
+                                        <p class="card-text">Pressão: <span id="pressaoMqttOeste">0</span></p>
+                                        <p class="card-text">Radiação: <span id="radiacaoMqttOeste">0</span></p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="row mb-2">
                     <div class="col-md-12">
                         <div class="card p-2 mb-2">
@@ -84,41 +132,9 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6 mb-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Regiões por Temperatura (%)</h5>
-                                <canvas id="chartTemperatura"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Regiões por Umidade (%)</h5>
-                                <canvas id="chartUmidade"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Regiões por Pressão (%)</h5>
-                                <canvas id="chartPressao"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 mb-4">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="card-title">Regiões por Radiação (%)</h5>
-                                <canvas id="chartRadiacao"></canvas>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
+            
+            <!-- Dashboard RabbitMQ -->    
             <div class="tab-pane fade" id="rabbitmq" role="tabpanel" aria-labelledby="rabbitmq-tab">
                 <div class="row mb-4">
                     <div class="col-md-3">
@@ -208,472 +224,411 @@
                     </div>
                 </div>
             </div>
+
         </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        // Base da API
-        const API_BASE = 'http://localhost:8080';
-        // MQTT - pooling automático
-        const chartTemperatura = new Chart(document.getElementById('chartTemperatura'), {
-            type: 'pie',
-            data: {
-                labels: ['Norte', 'Sul', 'Leste', 'Oeste'],
-                datasets: [{ data: [0,0,0,0], backgroundColor: ['#ff6384','#36a2eb','#ffce56','#4bc0c0'] }]
-            }
-        });
-        const chartUmidade = new Chart(document.getElementById('chartUmidade'), {
-            type: 'pie',
-            data: {
-                labels: ['Norte', 'Sul', 'Leste', 'Oeste'],
-                datasets: [{ data: [0,0,0,0], backgroundColor: ['#36a2eb','#ff6384','#4bc0c0','#ffce56'] }]
-            }
-        });
-        const chartPressao = new Chart(document.getElementById('chartPressao'), {
-            type: 'pie',
-            data: {
-                labels: ['Norte', 'Sul', 'Leste', 'Oeste'],
-                datasets: [{ data: [0,0,0,0], backgroundColor: ['#ffce56','#4bc0c0','#36a2eb','#ff6384'] }]
-            }
-        });
-        const chartRadiacao = new Chart(document.getElementById('chartRadiacao'), {
-            type: 'pie',
-            data: {
-                labels: ['Norte', 'Sul', 'Leste', 'Oeste'],
-                datasets: [{ data: [0,0,0,0], backgroundColor: ['#4bc0c0','#ffce56','#36a2eb','#ff6384'] }]
-            }
-        });
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            // Base da API
+            const API_BASE = 'http://localhost:8080';
+            const REGIONS = ['Norte', 'Sul', 'Leste', 'Oeste'];
+            var mqttCount = 0;
 
-        let mqttTabActive = true;
-        const mqttTabBtn = document.getElementById('mqtt-tab');
-        const rabbitTabBtn = document.getElementById('rabbitmq-tab');
-
-        mqttTabBtn.addEventListener('shown.bs.tab', function () {
-            mqttTabActive = true;
-        });
-        rabbitTabBtn.addEventListener('shown.bs.tab', function () {
-            mqttTabActive = false;
-        });
-
-        function atualizarDashboardMqtt() {
-            if (!mqttTabActive) return; // Só faz request se tab MQTT estiver ativa
-            const statusContainer = document.getElementById('statusContainerMqtt');
-            const statusElement = document.getElementById('statusMqtt');
-            const regioes = ['Norte', 'Sul', 'Leste', 'Oeste'];
-            const allChecked = document.getElementById('regAllMqtt').checked;
-            const filtros = allChecked ? regioes : regioes.filter(r => document.getElementById('reg'+r+'Mqtt').checked);
-            let endpoint;
-            if (filtros.length === 0) {
-                // Limpa dashboard se nada selecionado
-                document.getElementById('totalDadosMqtt').textContent = 0;
-                document.getElementById('totalTemperaturaMqtt').textContent = 0;
-                document.getElementById('totalUmidadeMqtt').textContent = 0;
-                document.getElementById('totalPressaoMqtt').textContent = 0;
-                document.getElementById('totalRadiacaoMqtt').textContent = 0;
-                chartTemperatura.data.datasets[0].data = [0,0,0,0];
-                chartTemperatura.update();
-                chartUmidade.data.datasets[0].data = [0,0,0,0];
-                chartUmidade.update();
-                chartPressao.data.datasets[0].data = [0,0,0,0];
-                chartPressao.update();
-                chartRadiacao.data.datasets[0].data = [0,0,0,0];
-                chartRadiacao.update();
-                return;
-            }
-            if (filtros.length === regioes.length) {
-                endpoint = API_BASE + '/api/drone-data/realtime/all';
-                fetch(endpoint)
-                    .then(response => {
-                        if (response.status === 200) {
-                            statusElement.textContent = 'Online';
-                            statusContainer.style.backgroundColor = '#d4edda';
-                            statusContainer.classList.remove('text-danger');
-                            statusContainer.classList.add('text-success');
-                            return response.json();
-                        } else {
-                            throw new Error('Erro na requisição');
-                        }
-                    })
-                    .then(apiResponse => {
-                        if (apiResponse.err) {
-                            statusElement.textContent = 'Erro: ' + apiResponse.err;
-                            statusContainer.style.backgroundColor = '#f8d7da';
-                            statusContainer.classList.add('text-danger');
-                            statusContainer.classList.remove('text-success');
-                            return;
-                        }
-                        const items = apiResponse.content.items || [];
-                        const count = items.length;
-                        document.getElementById('totalDadosMqtt').textContent = count;
-                        // Totais por elemento
-                        let totalTemperatura = 0, totalUmidade = 0, totalPressao = 0, totalRadiacao = 0;
-                        let regiaoMap = {Temperatura: {}, Umidade: {}, Pressao: {}, Radiacao: {}};
-                        regioes.forEach(r => {
-                            regiaoMap.Temperatura[r] = 0;
-                            regiaoMap.Umidade[r] = 0;
-                            regiaoMap.Pressao[r] = 0;
-                            regiaoMap.Radiacao[r] = 0;
-                        });
-                        items.forEach(item => {
-                            totalTemperatura += item.temp;
-                            totalUmidade += item.umidade;
-                            totalPressao += item.pressao;
-                            totalRadiacao += item.radiacao;
-                            if (regioes.includes(item.regiao)) {
-                                regiaoMap.Temperatura[item.regiao] += item.temp;
-                                regiaoMap.Umidade[item.regiao] += item.umidade;
-                                regiaoMap.Pressao[item.regiao] += item.pressao;
-                                regiaoMap.Radiacao[item.regiao] += item.radiacao;
-                            }
-                        });
-                        document.getElementById('totalTemperaturaMqtt').textContent = totalTemperatura;
-                        document.getElementById('totalUmidadeMqtt').textContent = totalUmidade;
-                        document.getElementById('totalPressaoMqtt').textContent = totalPressao;
-                        document.getElementById('totalRadiacaoMqtt').textContent = totalRadiacao;
-                        // Percentuais por região
-                        function calcPercent(map, total) {
-                            return regioes.map(r => total ? Math.round((map[r] / total) * 100) : 0);
-                        }
-                        chartTemperatura.data.datasets[0].data = calcPercent(regiaoMap.Temperatura, totalTemperatura);
-                        chartTemperatura.update();
-                        chartUmidade.data.datasets[0].data = calcPercent(regiaoMap.Umidade, totalUmidade);
-                        chartUmidade.update();
-                        chartPressao.data.datasets[0].data = calcPercent(regiaoMap.Pressao, totalPressao);
-                        chartPressao.update();
-                        chartRadiacao.data.datasets[0].data = calcPercent(regiaoMap.Radiacao, totalRadiacao);
-                        chartRadiacao.update();
-                    })
-                    .catch(() => {
-                        statusElement.textContent = 'Erro na conexão MQTT';
-                        statusContainer.style.backgroundColor = '#f8d7da';
-                        statusContainer.classList.add('text-danger');
-                        statusContainer.classList.remove('text-success');
-                    });
-            } else {
-                // Requisições por região
-                let promessas = filtros.map(region => fetch(`${API_BASE}/api/drone-data/realtime/${region}`)
-                    .then(response => {
-                        if (response.status === 200) {
-                            statusElement.textContent = 'Online';
-                            statusContainer.style.backgroundColor = '#d4edda';
-                            statusContainer.classList.remove('text-danger');
-                            statusContainer.classList.add('text-success');
-                            return response.json();
-                        } else {
-                            throw new Error('Erro na requisição');
-                        }
-                    })
-                    .catch(() => null)
-                );
-                Promise.all(promessas).then(respostas => {
-                    // Filtra respostas válidas
-                    const dadosValidos = respostas.filter(r => r && !r.err);
-                    let items = [];
-                    dadosValidos.forEach(r => {
-                        if (r.content && r.content.items) {
-                            items = items.concat(r.content.items);
-                        }
-                    });
-                    const count = items.length;
-                    document.getElementById('totalDadosMqtt').textContent = count;
-                    // Totais por elemento
-                    let totalTemperatura = 0, totalUmidade = 0, totalPressao = 0, totalRadiacao = 0;
-                    let regiaoMap = {Temperatura: {}, Umidade: {}, Pressao: {}, Radiacao: {}};
-                    regioes.forEach(r => {
-                        regiaoMap.Temperatura[r] = 0;
-                        regiaoMap.Umidade[r] = 0;
-                        regiaoMap.Pressao[r] = 0;
-                        regiaoMap.Radiacao[r] = 0;
-                    });
-                    items.forEach(item => {
-                        totalTemperatura += item.temp;
-                        totalUmidade += item.umidade;
-                        totalPressao += item.pressao;
-                        totalRadiacao += item.radiacao;
-                        if (regioes.includes(item.regiao)) {
-                            regiaoMap.Temperatura[item.regiao] += item.temp;
-                            regiaoMap.Umidade[item.regiao] += item.umidade;
-                            regiaoMap.Pressao[item.regiao] += item.pressao;
-                            regiaoMap.Radiacao[item.regiao] += item.radiacao;
-                        }
-                    });
-                    document.getElementById('totalTemperaturaMqtt').textContent = totalTemperatura;
-                    document.getElementById('totalUmidadeMqtt').textContent = totalUmidade;
-                    document.getElementById('totalPressaoMqtt').textContent = totalPressao;
-                    document.getElementById('totalRadiacaoMqtt').textContent = totalRadiacao;
-                    // Percentuais por região
-                    function calcPercent(map, total) {
-                        return regioes.map(r => total ? Math.round((map[r] / total) * 100) : 0);
+            const createPieChart = (elementId, labels, colors) => {
+                return new Chart(document.getElementById(elementId), {
+                    type: 'pie',
+                    data: {
+                        labels: labels,
+                        datasets: [{ data: [0, 0, 0, 0], backgroundColor: colors }]
                     }
-                    chartTemperatura.data.datasets[0].data = calcPercent(regiaoMap.Temperatura, totalTemperatura);
-                    chartTemperatura.update();
-                    chartUmidade.data.datasets[0].data = calcPercent(regiaoMap.Umidade, totalUmidade);
-                    chartUmidade.update();
-                    chartPressao.data.datasets[0].data = calcPercent(regiaoMap.Pressao, totalPressao);
-                    chartPressao.update();
-                    chartRadiacao.data.datasets[0].data = calcPercent(regiaoMap.Radiacao, totalRadiacao);
-                    chartRadiacao.update();
-                }).catch(() => {
-                    statusElement.textContent = 'Erro na conexão MQTT';
+                });
+            };
+        
+            const createLineChart = (elementId, label, borderColor) => {
+                return new Chart(document.getElementById(elementId), {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{ label: label, data: [], borderColor: borderColor, fill: false }]
+                    },
+                    options: {
+                        scales: {
+                            x: { title: { display: true, text: 'Tempo' } },
+                            y: { title: { display: true, text: 'Valor' } }
+                        }
+                    }
+                });
+            };
+        
+            let mqttTabActive = true;
+            document.getElementById('mqtt-tab').addEventListener('shown.bs.tab', () => mqttTabActive = true);
+            document.getElementById('rabbitmq-tab').addEventListener('shown.bs.tab', () => mqttTabActive = false);
+        
+            const updateStatusDisplay = (statusContainer, statusElement, isOnline, message) => {
+                statusElement.textContent = message;
+                if (isOnline) {
+                    statusContainer.style.backgroundColor = '#d4edda';
+                    statusContainer.classList.remove('text-danger');
+                    statusContainer.classList.add('text-success');
+                } else {
                     statusContainer.style.backgroundColor = '#f8d7da';
                     statusContainer.classList.add('text-danger');
                     statusContainer.classList.remove('text-success');
-                });
-            }
-        }
-        setInterval(atualizarDashboardMqtt, 2000);
-        atualizarDashboardMqtt();
-        // Adiciona lógica JS para o checkbox "all"
-        function syncAllCheckbox(tab) {
-            const allId = tab === 'mqtt' ? 'regAllMqtt' : 'regAllRabbit';
-            const prefix = tab === 'mqtt' ? 'reg' : 'reg';
-            const regioes = ['Norte', 'Sul', 'Leste', 'Oeste'];
-            const allCb = document.getElementById(allId);
-            const cbs = regioes.map(r => document.getElementById(prefix + r + (tab === 'mqtt' ? 'Mqtt' : 'Rabbit')));
-            allCb.addEventListener('change', function() {
-                cbs.forEach(cb => cb.checked = allCb.checked);
-                if (tab === 'mqtt') atualizarDashboardMqtt(); else atualizarDashboardRabbit();
-            });
-            cbs.forEach(cb => {
-                cb.addEventListener('change', function() {
-                    if (cbs.every(cb => cb.checked)) {
-                        allCb.checked = true;
+                }
+            };
+        
+            const fetchData = async (endpoint, statusContainer, statusElement, errorModuleName) => {
+                try {
+                    const response = await fetch(endpoint);
+                    if (response.status === 200) {
+                        updateStatusDisplay(statusContainer, statusElement, true, 'Online');
+                        const data = await response.json();
+                        if (data.error) {
+                            updateStatusDisplay(statusContainer, statusElement, false, `Error: ${data.err || data.error}`);
+                            return null;
+                        }
+                        return data;
                     } else {
-                        allCb.checked = false;
+                        throw new Error('Request failed');
                     }
-                    if (tab === 'mqtt') atualizarDashboardMqtt(); else atualizarDashboardRabbit();
-                });
-            });
-        }
-        syncAllCheckbox('mqtt');
-        syncAllCheckbox('rabbit');
+                } catch (error) {
+                    updateStatusDisplay(statusContainer, statusElement, false, `Connection Error ${errorModuleName}`);
+                    return null;
+                }
+            };
+        
+            const clearDashboard = (prefix, charts, isLineChart = false) => {
+                if (prefix === 'Mqtt') {
+                    REGIONS.forEach(region => {
+                        document.getElementById(`temperaturaMqtt${region}`).textContent = 0;
+                        document.getElementById(`umidadeMqtt${region}`).textContent = 0;
+                        document.getElementById(`pressaoMqtt${region}`).textContent = 0;
+                        document.getElementById(`radiacaoMqtt${region}`).textContent = 0;
+                    });
+                    
+                }
+                else if (prefix == 'Rabbit') {
+                    document.getElementById(`totalDadosRabbit`).textContent = 0;
+                    document.getElementById(`totalTemperaturaRabbit`).textContent = 0;
+                    document.getElementById(`totalUmidadeRabbit`).textContent = 0;
+                    document.getElementById(`totalPressaoRabbit`).textContent = 0;
+                    document.getElementById(`totalRadiacaoRabbit`).textContent = 0;
+                    
+                    charts.forEach(chart => {
+                        chart.data.labels = [];
+                        chart.data.datasets[0].data = [];
+                        chart.update();
+                    });
+                }
 
-        // RabbitMQ - atualização manual
-        const chartTempHistoricoRabbit = new Chart(document.getElementById('chartTempHistoricoRabbit'), {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{ label: 'Temperatura', data: [], borderColor: '#ff6384', fill: false }]
-            },
-            options: { scales: { x: { title: { display: true, text: 'Tempo' } }, y: { title: { display: true, text: 'Valor' } } } }
-        });
-        const chartUmidHistoricoRabbit = new Chart(document.getElementById('chartUmidHistoricoRabbit'), {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{ label: 'Umidade', data: [], borderColor: '#36a2eb', fill: false }]
-            },
-            options: { scales: { x: { title: { display: true, text: 'Tempo' } }, y: { title: { display: true, text: 'Valor' } } } }
-        });
-        const chartPressHistoricoRabbit = new Chart(document.getElementById('chartPressHistoricoRabbit'), {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{ label: 'Pressão', data: [], borderColor: '#ffce56', fill: false }]
-            },
-            options: { scales: { x: { title: { display: true, text: 'Tempo' } }, y: { title: { display: true, text: 'Valor' } } } }
-        });
-        const chartRadHistoricoRabbit = new Chart(document.getElementById('chartRadHistoricoRabbit'), {
-            type: 'line',
-            data: {
-                labels: [],
-                datasets: [{ label: 'Radiação', data: [], borderColor: '#4bc0c0', fill: false }]
-            },
-            options: { scales: { x: { title: { display: true, text: 'Tempo' } }, y: { title: { display: true, text: 'Valor' } } } }
-        });
+            };
 
-        function atualizarDashboardRabbit() {
-            const statusContainer = document.getElementById('statusContainerRabbit');
-            const statusElement = document.getElementById('statusRabbit');
-            const regioes = ['Norte', 'Sul', 'Leste', 'Oeste'];
-            // Filtros selecionados
-            const filtros = regioes.filter(r => document.getElementById('reg'+r+'Rabbit').checked);
-            let endpoint;
-            if (filtros.length === 0) {
-                // Limpa dashboard se nada selecionado
-                document.getElementById('totalDadosRabbit').textContent = 0;
-                document.getElementById('totalTemperaturaRabbit').textContent = 0;
-                document.getElementById('totalUmidadeRabbit').textContent = 0;
-                document.getElementById('totalPressaoRabbit').textContent = 0;
-                document.getElementById('totalRadiacaoRabbit').textContent = 0;
-                chartTempHistoricoRabbit.data.labels = [];
-                chartTempHistoricoRabbit.data.datasets[0].data = [];
-                chartTempHistoricoRabbit.update();
-                chartUmidHistoricoRabbit.data.labels = [];
-                chartUmidHistoricoRabbit.data.datasets[0].data = [];
-                chartUmidHistoricoRabbit.update();
-                chartPressHistoricoRabbit.data.labels = [];
-                chartPressHistoricoRabbit.data.datasets[0].data = [];
-                chartPressHistoricoRabbit.update();
-                chartRadHistoricoRabbit.data.labels = [];
-                chartRadHistoricoRabbit.data.datasets[0].data = [];
-                chartRadHistoricoRabbit.update();
-                return;
+            const displayDataMqtt = (items, isLineChart=false) => {
+                clearDashboard('Mqtt', null, false);
+
+                const temperaturaNorte = document.getElementById("temperaturaMqttNorte");
+                const umidadeNorte = document.getElementById("umidadeMqttNorte");
+                const pressaoNorte = document.getElementById("pressaoMqttNorte");
+                const radiacaoNorte = document.getElementById("radiacaoMqttNorte");
+
+                const temperaturaSul = document.getElementById("temperaturaMqttSul");
+                const umidadeSul = document.getElementById("umidadeMqttSul");
+                const pressaoSul = document.getElementById("pressaoMqttSul");
+                const radiacaoSul = document.getElementById("radiacaoMqttSul");
+
+                const temperaturaLeste = document.getElementById("temperaturaMqttLeste");
+                const umidadeLeste = document.getElementById("umidadeMqttLeste");
+                const pressaoLeste = document.getElementById("pressaoMqttLeste");
+                const radiacaoLeste = document.getElementById("radiacaoMqttLeste");
+
+                const temperaturaOeste = document.getElementById("temperaturaMqttOeste");
+                const umidadeOeste = document.getElementById("umidadeMqttOeste");
+                const pressaoOeste = document.getElementById("pressaoMqttOeste");
+                const radiacaoOeste = document.getElementById("radiacaoMqttOeste");
+                
+                const contador = document.getElementById("totalDadosMqtt");
+                contador.textContent = mqttCount;
+                
+                items.forEach((item) => {
+                    switch (item.regiao) {
+                        case "NORTE": {
+                            temperaturaNorte.textContent = item.temperatura;
+                            umidadeNorte.textContent = item.umidade;
+                            pressaoNorte.textContent = item.pressao;
+                            radiacaoNorte.textContent = item.radiacao;
+                            break;
+                        }
+                        case "SUL": {
+                            temperaturaSul.textContent = item.temperatura;
+                            umidadeSul.textContent = item.umidade;
+                            pressaoSul.textContent = item.pressao;
+                            radiacaoSul.textContent = item.radiacao;
+                            break;
+                        }
+                        case "LESTE": {
+                            temperaturaLeste.textContent = item.temperatura;
+                            umidadeLeste.textContent = item.umidade;
+                            pressaoLeste.textContent = item.pressao;
+                            radiacaoLeste.textContent = item.radiacao;
+                            break;
+                        }
+                        case "OESTE": {
+                            temperaturaOeste.textContent = item.temperatura;
+                            umidadeOeste.textContent = item.umidade;
+                            pressaoOeste.textContent = item.pressao;
+                            radiacaoOeste.textContent = item.radiacao;
+                            break;
+                        }
+                        default: {
+                            break;
+                        }
+                    }
+                })
             }
-            if (filtros.length === regioes.length) {
-                endpoint = API_BASE + '/api/drone-data/history/all';
-                fetch(endpoint)
-                    .then(response => {
-                        if (response.status === 200) {
-                            statusElement.textContent = 'Online';
-                            statusContainer.style.backgroundColor = '#d4edda';
-                            statusContainer.classList.remove('text-danger');
-                            statusContainer.classList.add('text-success');
-                            return response.json();
-                        } else {
-                            throw new Error('Erro na requisição');
-                        }
-                    })
-                    .then(apiResponse => {
-                        if (apiResponse.error) {
-                            statusElement.textContent = 'Erro: ' + apiResponse.error;
-                            statusContainer.style.backgroundColor = '#f8d7da';
-                            statusContainer.classList.add('text-danger');
-                            statusContainer.classList.remove('text-success');
-                            return;
-                        }
-                        const items = apiResponse.content.items || [];
-                        const count = items.length;
-                        document.getElementById('totalDadosRabbit').textContent = count;
-                        // Totais por elemento
-                        let totalTemperatura = 0, totalUmidade = 0, totalPressao = 0, totalRadiacao = 0;
-                        let historicoTempo = [], historicoTemperatura = [], historicoUmidade = [], historicoPressao = [], historicoRadiacao = [];
-                        let regiaoMap = {Temperatura: {}, Umidade: {}, Pressao: {}, Radiacao: {}};
-                        regioes.forEach(r => {
-                            regiaoMap.Temperatura[r] = 0;
-                            regiaoMap.Umidade[r] = 0;
-                            regiaoMap.Pressao[r] = 0;
-                            regiaoMap.Radiacao[r] = 0;
-                        });
-                        items.forEach((item, idx) => {
-                            totalTemperatura += item.temp;
-                            totalUmidade += item.umidade;
-                            totalPressao += item.pressao;
-                            totalRadiacao += item.radiacao;
-                            historicoTempo.push(idx+1);
-                            historicoTemperatura.push(item.temp);
-                            historicoUmidade.push(item.umidade);
-                            historicoPressao.push(item.pressao);
-                            historicoRadiacao.push(item.radiacao);
-                            if (regioes.includes(item.regiao)) {
-                                regiaoMap.Temperatura[item.regiao] += item.temp;
-                                regiaoMap.Umidade[item.regiao] += item.umidade;
-                                regiaoMap.Pressao[item.regiao] += item.pressao;
-                                regiaoMap.Radiacao[item.regiao] += item.radiacao;
-                            }
-                        });
-                        document.getElementById('totalTemperaturaRabbit').textContent = totalTemperatura;
-                        document.getElementById('totalUmidadeRabbit').textContent = totalUmidade;
-                        document.getElementById('totalPressaoRabbit').textContent = totalPressao;
-                        document.getElementById('totalRadiacaoRabbit').textContent = totalRadiacao;
-                        chartTempHistoricoRabbit.data.labels = historicoTempo;
-                        chartTempHistoricoRabbit.data.datasets[0].data = historicoTemperatura;
-                        chartTempHistoricoRabbit.update();
-                        chartUmidHistoricoRabbit.data.labels = historicoTempo;
-                        chartUmidHistoricoRabbit.data.datasets[0].data = historicoUmidade;
-                        chartUmidHistoricoRabbit.update();
-                        chartPressHistoricoRabbit.data.labels = historicoTempo;
-                        chartPressHistoricoRabbit.data.datasets[0].data = historicoPressao;
-                        chartPressHistoricoRabbit.update();
-                        chartRadHistoricoRabbit.data.labels = historicoTempo;
-                        chartRadHistoricoRabbit.data.datasets[0].data = historicoRadiacao;
-                        chartRadHistoricoRabbit.update();
-                    })
-                    .catch(() => {
-                        statusElement.textContent = 'Erro na conexão RabbitMQ';
-                        statusContainer.style.backgroundColor = '#f8d7da';
-                        statusContainer.classList.add('text-danger');
-                        statusContainer.classList.remove('text-success');
-                    });
-            } else {
-                // Requisições por região
-                let promessas = filtros.map(region => fetch(`${API_BASE}/api/drone-data/history/${region}`)
-                    .then(response => {
-                        if (response.status === 200) {
-                            statusElement.textContent = 'Online';
-                            statusContainer.style.backgroundColor = '#d4edda';
-                            statusContainer.classList.remove('text-danger');
-                            statusContainer.classList.add('text-success');
-                            return response.json();
-                        } else {
-                            throw new Error('Erro na requisição');
-                        }
-                    })
-                    .catch(() => null)
-                );
-                Promise.all(promessas).then(respostas => {
-                    // Filtra respostas válidas
-                    const dadosValidos = respostas.filter(r => r && !r.error);
-                    let items = [];
-                    dadosValidos.forEach(r => {
-                        if (r.content && r.content.items) {
-                            items = items.concat(r.content.items);
-                        }
-                    });
-                    const count = items.length;
-                    document.getElementById('totalDadosRabbit').textContent = count;
-                    // Totais por elemento
-                    let totalTemperatura = 0, totalUmidade = 0, totalPressao = 0, totalRadiacao = 0;
-                    let historicoTempo = [], historicoTemperatura = [], historicoUmidade = [], historicoPressao = [], historicoRadiacao = [];
-                    let regiaoMap = {Temperatura: {}, Umidade: {}, Pressao: {}, Radiacao: {}};
-                    regioes.forEach(r => {
-                        regiaoMap.Temperatura[r] = 0;
-                        regiaoMap.Umidade[r] = 0;
-                        regiaoMap.Pressao[r] = 0;
-                        regiaoMap.Radiacao[r] = 0;
-                    });
-                    items.forEach((item, idx) => {
-                        totalTemperatura += item.temp;
-                        totalUmidade += item.umidade;
-                        totalPressao += item.pressao;
-                        totalRadiacao += item.radiacao;
-                        historicoTempo.push(idx+1);
-                        historicoTemperatura.push(item.temp);
+
+            const displayDataRabbitMq = (items, charts, isLineChart=false, data) => {
+                document.getElementById(`totalDadosRabbit`).textContent = items.length;
+                
+                const {
+                    totalTemperatura,
+                    totalUmidade,
+                    totalPressao,
+                    totalRadiacao,
+                    historicoTempo,
+                    historicoTemperatura,
+                    historicoUmidade,
+                    historicoPressao,
+                    historicoRadiacao,
+                    regiaoMap
+                } = data;
+
+                document.getElementById(`totalTemperaturaRabbit`).textContent = totalTemperatura.toFixed(2);
+                document.getElementById(`totalUmidadeRabbit`).textContent = totalUmidade.toFixed(2);
+                document.getElementById(`totalPressaoRabbit`).textContent = totalPressao.toFixed(2);
+                document.getElementById(`totalRadiacaoRabbit`).textContent = totalRadiacao.toFixed(2);
+            
+                if (isLineChart) {
+                    charts[0].data.labels = historicoTempo;
+                    charts[0].data.datasets[0].data = historicoTemperatura;
+
+                    charts[1].data.labels = historicoTempo;
+                    charts[1].data.datasets[0].data = historicoUmidade;
+
+                    charts[2].data.labels = historicoTempo;
+                    charts[2].data.datasets[0].data = historicoPressao;
+
+                    charts[3].data.labels = historicoTempo;
+                    charts[3].data.datasets[0].data = historicoRadiacao;
+                } else {
+                    const calcPercent = (map, total) => REGIONS.map(r => total ? Math.round((map[r] / total) * 100) : 0);
+                    charts[0].data.datasets[0].data = calcPercent(regiaoMap.Temperatura, totalTemperatura.toFixed(2));
+                    charts[1].data.datasets[0].data = calcPercent(regiaoMap.Umidade, totalUmidade.toFixed(2));
+                    charts[2].data.datasets[0].data = calcPercent(regiaoMap.Pressao, totalPressao.toFixed(2));
+                    charts[3].data.datasets[0].data = calcPercent(regiaoMap.Radiacao, totalRadiacao.toFixed(2));
+                }
+                
+                charts.forEach(chart => chart.update());
+            }
+
+            const processData = (items, prefix, isLineChart) => {
+                let totalTemperatura = 0;
+                let totalUmidade = 0;
+                let totalPressao = 0;
+                let totalRadiacao = 0;
+                
+                const regiaoMap = {
+                    Temperatura: Object.fromEntries(REGIONS.map(r => [r, 0])),
+                    Umidade: Object.fromEntries(REGIONS.map(r => [r, 0])),
+                    Pressao: Object.fromEntries(REGIONS.map(r => [r, 0])),
+                    Radiacao: Object.fromEntries(REGIONS.map(r => [r, 0]))
+                };
+        
+                const historicoTempo = [];
+                const historicoTemperatura = [];
+                const historicoUmidade = [];
+                const historicoPressao = [];
+                const historicoRadiacao = [];
+        
+                items.forEach((item, idx) => {
+                    totalTemperatura += item.temperatura;
+                    totalUmidade += item.umidade;
+                    totalPressao += item.pressao;
+                    totalRadiacao += item.radiacao;
+        
+                    if (isLineChart) {
+                        historicoTempo.push(idx + 1);
+                        historicoTemperatura.push(item.temperatura);
                         historicoUmidade.push(item.umidade);
                         historicoPressao.push(item.pressao);
                         historicoRadiacao.push(item.radiacao);
-                        if (regioes.includes(item.regiao)) {
-                            regiaoMap.Temperatura[item.regiao] += item.temp;
-                            regiaoMap.Umidade[item.regiao] += item.umidade;
-                            regiaoMap.Pressao[item.regiao] += item.pressao;
-                            regiaoMap.Radiacao[item.regiao] += item.radiacao;
+                    }
+        
+                    if (REGIONS.includes(item.regiao)) {
+                        regiaoMap.Temperatura[item.regiao] += item.temperatura;
+                        regiaoMap.Umidade[item.regiao] += item.umidade;
+                        regiaoMap.Pressao[item.regiao] += item.pressao;
+                        regiaoMap.Radiacao[item.regiao] += item.radiacao;
+                    }
+                });
+
+                return {
+                    totalTemperatura,
+                    totalUmidade,
+                    totalPressao,
+                    totalRadiacao,
+                    historicoTempo,
+                    historicoTemperatura,
+                    historicoUmidade,
+                    historicoPressao,
+                    historicoRadiacao,
+                    regiaoMap,
+                };
+            }
+
+            const processAndDisplayData = (items, prefix, charts, isLineChart = false) => {
+                const data = processData(items, prefix, isLineChart);
+
+                if (prefix == 'Mqtt') {
+                    displayDataMqtt(items, isLineChart);
+                }
+                else if (prefix == 'Rabbit') {
+                    displayDataRabbitMq(items, charts, isLineChart, data);
+                }
+            };
+
+            var items = [];
+            const atualizarDashboardMqtt = async () => {
+                if (!mqttTabActive) return;
+                
+                const statusContainer = document.getElementById('statusContainerMqtt');
+                const statusElement = document.getElementById('statusMqtt');
+                const allChecked = document.getElementById('regAllMqtt').checked;
+                const filtros = allChecked ? REGIONS : REGIONS.filter(r => document.getElementById(`reg${r}Mqtt`).checked);
+        
+                if (filtros.length === 0) {
+                    clearDashboard('Mqtt', null);
+                    return;
+                }
+                
+
+                const itemsBeforeFetch = [...items]; 
+                
+                if (filtros.length === REGIONS.length) {
+                    const apiResponse = await fetchData(`${API_BASE}/api/drone-data/realtime/all`, statusContainer, statusElement, 'MQTT');
+                    if (apiResponse && apiResponse.content && apiResponse.content.items) {
+                        const newItemsFromApi = apiResponse.content.items;
+
+                        newItemsFromApi.forEach((itemFromApi) => {
+                            if (!itemsBeforeFetch.some(existingItem => JSON.stringify(itemFromApi) === JSON.stringify(existingItem)) &&
+                                !items.some(currentItem => JSON.stringify(itemFromApi) === JSON.stringify(currentItem))) {
+                                mqttCount++;
+                                items.push(itemFromApi);
+                            } else if (!items.some(currentItem => JSON.stringify(itemFromApi) === JSON.stringify(currentItem))) {
+                                items.push(itemFromApi);
+                            }
+                        });
+                    }
+                } else {
+                    const promises = filtros.map(region => fetchData(`${API_BASE}/api/drone-data/realtime/${region.toLowerCase()}`, statusContainer, statusElement, 'MQTT'));
+                    const responses = await Promise.all(promises);
+                    
+                    let allFetchedItems = [];
+                    responses.forEach(res => {
+                        if (res && res.content && res.content.items) {
+                            allFetchedItems = allFetchedItems.concat(res.content.items);
                         }
                     });
-                    document.getElementById('totalTemperaturaRabbit').textContent = totalTemperatura;
-                    document.getElementById('totalUmidadeRabbit').textContent = totalUmidade;
-                    document.getElementById('totalPressaoRabbit').textContent = totalPressao;
-                    document.getElementById('totalRadiacaoRabbit').textContent = totalRadiacao;
-                    chartTempHistoricoRabbit.data.labels = historicoTempo;
-                    chartTempHistoricoRabbit.data.datasets[0].data = historicoTemperatura;
-                    chartTempHistoricoRabbit.update();
-                    chartUmidHistoricoRabbit.data.labels = historicoTempo;
-                    chartUmidHistoricoRabbit.data.datasets[0].data = historicoUmidade;
-                    chartUmidHistoricoRabbit.update();
-                    chartPressHistoricoRabbit.data.labels = historicoTempo;
-                    chartPressHistoricoRabbit.data.datasets[0].data = historicoPressao;
-                    chartPressHistoricoRabbit.update();
-                    chartRadHistoricoRabbit.data.labels = historicoTempo;
-                    chartRadHistoricoRabbit.data.datasets[0].data = historicoRadiacao;
-                    chartRadHistoricoRabbit.update();
-                }).catch(() => {
-                    statusElement.textContent = 'Erro na conexão RabbitMQ';
-                    statusContainer.style.backgroundColor = '#f8d7da';
-                    statusContainer.classList.add('text-danger');
-                    statusContainer.classList.remove('text-success');
+
+                    allFetchedItems.forEach((itemFromApi) => {
+                        if (!itemsBeforeFetch.some(existingItem => JSON.stringify(itemFromApi) === JSON.stringify(existingItem)) &&
+                            !items.some(currentItem => JSON.stringify(itemFromApi) === JSON.stringify(currentItem))) {
+                            mqttCount++;
+                            items.push(itemFromApi);
+                        } else if (!items.some(currentItem => JSON.stringify(itemFromApi) === JSON.stringify(currentItem))) {
+                            
+                            items.push(itemFromApi);
+                        }
+                    });
+                    
+                }
+
+                console.log(`Número de itens MQTT novos recebidos nesta atualização: ${mqttCount}`);
+
+                processAndDisplayData(items, 'Mqtt', null, false);
+            };
+            
+            const lineCharts = [];
+
+            const atualizarDashboardRabbit = async () => {
+                const statusContainer = document.getElementById('statusContainerRabbit');
+                const statusElement = document.getElementById('statusRabbit');
+                const allChecked = document.getElementById('regAllRabbit').checked;
+                const filtros = allChecked ? REGIONS : REGIONS.filter(r => document.getElementById(`reg${r}Rabbit`).checked);
+                
+                if (lineCharts.length === 0) {
+                    const chartTempHistoricoRabbit = createLineChart('chartTempHistoricoRabbit', 'Temperatura', '#ff6384');
+                    const chartUmidHistoricoRabbit = createLineChart('chartUmidHistoricoRabbit', 'Umidade', '#36a2eb');
+                    const chartPressHistoricoRabbit = createLineChart('chartPressHistoricoRabbit', 'Pressão', '#ffce56');
+                    const chartRadHistoricoRabbit = createLineChart('chartRadHistoricoRabbit', 'Radiação', '#4bc0c0');
+                    lineCharts.push(chartTempHistoricoRabbit);
+                    lineCharts.push(chartUmidHistoricoRabbit);
+                    lineCharts.push(chartPressHistoricoRabbit);
+                    lineCharts.push(chartRadHistoricoRabbit);
+                }
+        
+                if (filtros.length === 0) {
+                    clearDashboard('Rabbit', lineCharts, true);
+                    return;
+                }
+        
+                let items = [];
+                if (filtros.length === REGIONS.length) {
+                    const apiResponse = await fetchData(`${API_BASE}/api/drone-data/history/all`, statusContainer, statusElement, 'RabbitMQ');
+                    if (apiResponse) {
+                        items = apiResponse.content.items || [];
+                    }
+                } else {
+                    const promises = filtros.map(region => fetchData(`${API_BASE}/api/drone-data/history/${region}`, statusContainer, statusElement, 'RabbitMQ'));
+                    const responses = await Promise.all(promises);
+                    responses.forEach(res => {
+                        if (res && res.content && res.content.items) {
+                            items = items.concat(res.content.items);
+                        }
+                    });
+                }
+                processAndDisplayData(items, 'Rabbit', lineCharts, true);
+            };
+        
+            setInterval(atualizarDashboardMqtt, 2000);
+            atualizarDashboardMqtt();
+        
+            const syncAllCheckbox = (tab) => {
+                const allCb = document.getElementById(`regAll${tab === 'mqtt' ? 'Mqtt' : 'Rabbit'}`);
+                const cbs = REGIONS.map(r => document.getElementById(`reg${r}${tab === 'mqtt' ? 'Mqtt' : 'Rabbit'}`));
+        
+                allCb.addEventListener('change', () => {
+                    cbs.forEach(cb => cb.checked = allCb.checked);
+                    tab === 'mqtt' ? atualizarDashboardMqtt() : atualizarDashboardRabbit();
                 });
-            }
-        }
-        document.getElementById('btnAtualizarRabbit').addEventListener('click', atualizarDashboardRabbit);
-        // Atualiza dashboard ao mudar filtros
-        if (document.querySelectorAll('#filtrosRegiaoMqtt input[type=checkbox]').length) {
+        
+                cbs.forEach(cb => {
+                    cb.addEventListener('change', () => {
+                        allCb.checked = cbs.every(cb => cb.checked);
+                        tab === 'mqtt' ? atualizarDashboardMqtt() : atualizarDashboardRabbit();
+                    });
+                });
+            };
+        
+            syncAllCheckbox('mqtt');
+            syncAllCheckbox('rabbit');
+        
+            document.getElementById('btnAtualizarRabbit').addEventListener('click', atualizarDashboardRabbit);
+
             document.querySelectorAll('#filtrosRegiaoMqtt input[type=checkbox]').forEach(cb => {
                 cb.addEventListener('change', atualizarDashboardMqtt);
             });
-        }
-        if (document.querySelectorAll('#filtrosRegiaoRabbit input[type=checkbox]').length) {
             document.querySelectorAll('#filtrosRegiaoRabbit input[type=checkbox]').forEach(cb => {
                 cb.addEventListener('change', atualizarDashboardRabbit);
             });
-        }
-    </script>
+        </script>
 </body>
 </html>
