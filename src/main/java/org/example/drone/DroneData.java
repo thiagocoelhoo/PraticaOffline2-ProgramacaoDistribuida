@@ -1,4 +1,4 @@
-package org.example.model;
+package org.example.drone;
 
 import java.util.Arrays;
 import java.util.List;

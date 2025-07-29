@@ -1,4 +1,4 @@
-package org.example;
+package org.example.gateway;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import org.example.Logger;
 
 public class Database {
     private List<String> items;
