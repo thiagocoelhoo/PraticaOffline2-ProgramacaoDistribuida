@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Drones</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body class="bg-light">
+    <div class="container py-4">
+        <h1 class="mb-4 text-center">Dashboard de Dados dos Drones</h1>
+        <ul class="nav nav-tabs mb-3" id="dashboardTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="mqtt-tab" data-bs-toggle="tab" data-bs-target="#mqtt" type="button" role="tab" aria-controls="mqtt" aria-selected="true">MQTT</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="rabbitmq-tab" data-bs-toggle="tab" data-bs-target="#rabbitmq" type="button" role="tab" aria-controls="rabbitmq" aria-selected="false">RabbitMQ</button>
+            </li>
+        </ul>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="status-container p-1 my-1" id="statusContainerMqtt">
+                    <span id="statusMqtt" class="status-message"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="status-container p-1 my-1" id="statusContainerRabbit">
+                    <span id="statusRabbit" class="status-message"></span>
+                </div>
+            </div>
+        </div>
+        <div class="tab-content" id="dashboardTabsContent">
+            <div class="tab-pane fade show active" id="mqtt" role="tabpanel" aria-labelledby="mqtt-tab">
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">Total de Dados Coletados (MQTT)</h5>
+                                <p class="card-text display-6" id="totalDadosMqtt">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Total por Elemento Climático (MQTT)</h5>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">Temperatura: <span id="totalTemperaturaMqtt">0</span></li>
+                                    <li class="list-group-item">Umidade: <span id="totalUmidadeMqtt">0</span></li>
+                                    <li class="list-group-item">Pressão: <span id="totalPressaoMqtt">0</span></li>
+                                    <li class="list-group-item">Radiação: <span id="totalRadiacaoMqtt">0</span></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-12">
+                        <div class="card p-2 mb-2">
+                            <strong>Filtrar regiões (MQTT):</strong>
+                            <div id="filtrosRegiaoMqtt" class="d-flex gap-3 flex-wrap">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="regAllMqtt" value="all" checked>
+                                    <label class="form-check-label" for="regAllMqtt"><strong>Todas</strong></label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="regNorteMqtt" value="Norte" checked>
+                                    <label class="form-check-label" for="regNorteMqtt">Norte</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="regSulMqtt" value="Sul" checked>
+                                    <label class="form-check-label" for="regSulMqtt">Sul</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="regLesteMqtt" value="Leste" checked>
+                                    <label class="form-check-label" for="regLesteMqtt">Leste</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="regOesteMqtt" value="Oeste" checked>
+                                    <label class="form-check-label" for="regOesteMqtt">Oeste</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Regiões por Temperatura (%)</h5>
+                                <canvas id="chartTemperatura"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Regiões por Umidade (%)</h5>
+                                <canvas id="chartUmidade"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Regiões por Pressão (%)</h5>
+                                <canvas id="chartPressao"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Regiões por Radiação (%)</h5>
+                                <canvas id="chartRadiacao"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="rabbitmq" role="tabpanel" aria-labelledby="rabbitmq-tab">
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card text-center">
+                            <div class="card-body">
+                                <h5 class="card-title">Total de Dados Coletados (RabbitMQ)</h5>
+                                <p class="card-text display-6" id="totalDadosRabbit">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-9">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Total por Elemento Climático (RabbitMQ)</h5>
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">Temperatura: <span id="totalTemperaturaRabbit">0</span></li>
+                                    <li class="list-group-item">Umidade: <span id="totalUmidadeRabbit">0</span></li>
+                                    <li class="list-group-item">Pressão: <span id="totalPressaoRabbit">0</span></li>
+                                    <li class="list-group-item">Radiação: <span id="totalRadiacaoRabbit">0</span></li>
+                                </ul>
+                                <button class="btn btn-primary mt-3" id="btnAtualizarRabbit">Atualizar Dados RabbitMQ</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mb-2">
+                    <div class="col-md-12">
+                        <div class="card p-2 mb-2">
+                            <strong>Filtrar regiões (RabbitMQ):</strong>
+                            <div id="filtrosRegiaoRabbit" class="d-flex gap-3 flex-wrap">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="regAllRabbit" value="all" checked>
+                                    <label class="form-check-label" for="regAllRabbit"><strong>Todas</strong></label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="regNorteRabbit" value="Norte" checked>
+                                    <label class="form-check-label" for="regNorteRabbit">Norte</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="regSulRabbit" value="Sul" checked>
+                                    <label class="form-check-label" for="regSulRabbit">Sul</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="regLesteRabbit" value="Leste" checked>
+                                    <label class="form-check-label" for="regLesteRabbit">Leste</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="regOesteRabbit" value="Oeste" checked>
+                                    <label class="form-check-label" for="regOesteRabbit">Oeste</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Histórico de Temperatura</h5>
+                                <canvas id="chartTempHistoricoRabbit"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Histórico de Umidade</h5>
+                                <canvas id="chartUmidHistoricoRabbit"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Histórico de Pressão</h5>
+                                <canvas id="chartPressHistoricoRabbit"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title">Histórico de Radiação</h5>
+                                <canvas id="chartRadHistoricoRabbit"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Base da API
+        const API_BASE = 'http://localhost:8080';
+        // MQTT - pooling automático
+        const chartTemperatura = new Chart(document.getElementById('chartTemperatura'), {
+            type: 'pie',
+            data: {
+                labels: ['Norte', 'Sul', 'Leste', 'Oeste'],
+                datasets: [{ data: [0,0,0,0], backgroundColor: ['#ff6384','#36a2eb','#ffce56','#4bc0c0'] }]
+            }
+        });
+        const chartUmidade = new Chart(document.getElementById('chartUmidade'), {
+            type: 'pie',
+            data: {
+                labels: ['Norte', 'Sul', 'Leste', 'Oeste'],
+                datasets: [{ data: [0,0,0,0], backgroundColor: ['#36a2eb','#ff6384','#4bc0c0','#ffce56'] }]
+            }
+        });
+        const chartPressao = new Chart(document.getElementById('chartPressao'), {
+            type: 'pie',
+            data: {
+                labels: ['Norte', 'Sul', 'Leste', 'Oeste'],
+                datasets: [{ data: [0,0,0,0], backgroundColor: ['#ffce56','#4bc0c0','#36a2eb','#ff6384'] }]
+            }
+        });
+        const chartRadiacao = new Chart(document.getElementById('chartRadiacao'), {
+            type: 'pie',
+            data: {
+                labels: ['Norte', 'Sul', 'Leste', 'Oeste'],
+                datasets: [{ data: [0,0,0,0], backgroundColor: ['#4bc0c0','#ffce56','#36a2eb','#ff6384'] }]
+            }
+        });
+
+        let mqttTabActive = true;
+        const mqttTabBtn = document.getElementById('mqtt-tab');
+        const rabbitTabBtn = document.getElementById('rabbitmq-tab');
+
+        mqttTabBtn.addEventListener('shown.bs.tab', function () {
+            mqttTabActive = true;
+        });
+        rabbitTabBtn.addEventListener('shown.bs.tab', function () {
+            mqttTabActive = false;
+        });
+
+        function atualizarDashboardMqtt() {
+            if (!mqttTabActive) return; // Só faz request se tab MQTT estiver ativa
+            const statusContainer = document.getElementById('statusContainerMqtt');
+            const statusElement = document.getElementById('statusMqtt');
+            const regioes = ['Norte', 'Sul', 'Leste', 'Oeste'];
+            const allChecked = document.getElementById('regAllMqtt').checked;
+            const filtros = allChecked ? regioes : regioes.filter(r => document.getElementById('reg'+r+'Mqtt').checked);
+            let endpoint;
+            if (filtros.length === 0) {
+                // Limpa dashboard se nada selecionado
+                document.getElementById('totalDadosMqtt').textContent = 0;
+                document.getElementById('totalTemperaturaMqtt').textContent = 0;
+                document.getElementById('totalUmidadeMqtt').textContent = 0;
+                document.getElementById('totalPressaoMqtt').textContent = 0;
+                document.getElementById('totalRadiacaoMqtt').textContent = 0;
+                chartTemperatura.data.datasets[0].data = [0,0,0,0];
+                chartTemperatura.update();
+                chartUmidade.data.datasets[0].data = [0,0,0,0];
+                chartUmidade.update();
+                chartPressao.data.datasets[0].data = [0,0,0,0];
+                chartPressao.update();
+                chartRadiacao.data.datasets[0].data = [0,0,0,0];
+                chartRadiacao.update();
+                return;
+            }
+            if (filtros.length === regioes.length) {
+                endpoint = API_BASE + '/api/drone-data/realtime/all';
+                fetch(endpoint)
+                    .then(response => {
+                        if (response.status === 200) {
+                            statusElement.textContent = 'Online';
+                            statusContainer.style.backgroundColor = '#d4edda';
+                            statusContainer.classList.remove('text-danger');
+                            statusContainer.classList.add('text-success');
+                            return response.json();
+                        } else {
+                            throw new Error('Erro na requisição');
+                        }
+                    })
+                    .then(apiResponse => {
+                        if (apiResponse.err) {
+                            statusElement.textContent = 'Erro: ' + apiResponse.err;
+                            statusContainer.style.backgroundColor = '#f8d7da';
+                            statusContainer.classList.add('text-danger');
+                            statusContainer.classList.remove('text-success');
+                            return;
+                        }
+                        const items = apiResponse.content.items || [];
+                        const count = items.length;
+                        document.getElementById('totalDadosMqtt').textContent = count;
+                        // Totais por elemento
+                        let totalTemperatura = 0, totalUmidade = 0, totalPressao = 0, totalRadiacao = 0;
+                        let regiaoMap = {Temperatura: {}, Umidade: {}, Pressao: {}, Radiacao: {}};
+                        regioes.forEach(r => {
+                            regiaoMap.Temperatura[r] = 0;
+                            regiaoMap.Umidade[r] = 0;
+                            regiaoMap.Pressao[r] = 0;
+                            regiaoMap.Radiacao[r] = 0;
+                        });
+                        items.forEach(item => {
+                            totalTemperatura += item.temp;
+                            totalUmidade += item.umidade;
+                            totalPressao += item.pressao;
+                            totalRadiacao += item.radiacao;
+                            if (regioes.includes(item.regiao)) {
+                                regiaoMap.Temperatura[item.regiao] += item.temp;
+                                regiaoMap.Umidade[item.regiao] += item.umidade;
+                                regiaoMap.Pressao[item.regiao] += item.pressao;
+                                regiaoMap.Radiacao[item.regiao] += item.radiacao;
+                            }
+                        });
+                        document.getElementById('totalTemperaturaMqtt').textContent = totalTemperatura;
+                        document.getElementById('totalUmidadeMqtt').textContent = totalUmidade;
+                        document.getElementById('totalPressaoMqtt').textContent = totalPressao;
+                        document.getElementById('totalRadiacaoMqtt').textContent = totalRadiacao;
+                        // Percentuais por região
+                        function calcPercent(map, total) {
+                            return regioes.map(r => total ? Math.round((map[r] / total) * 100) : 0);
+                        }
+                        chartTemperatura.data.datasets[0].data = calcPercent(regiaoMap.Temperatura, totalTemperatura);
+                        chartTemperatura.update();
+                        chartUmidade.data.datasets[0].data = calcPercent(regiaoMap.Umidade, totalUmidade);
+                        chartUmidade.update();
+                        chartPressao.data.datasets[0].data = calcPercent(regiaoMap.Pressao, totalPressao);
+                        chartPressao.update();
+                        chartRadiacao.data.datasets[0].data = calcPercent(regiaoMap.Radiacao, totalRadiacao);
+                        chartRadiacao.update();
+                    })
+                    .catch(() => {
+                        statusElement.textContent = 'Erro na conexão MQTT';
+                        statusContainer.style.backgroundColor = '#f8d7da';
+                        statusContainer.classList.add('text-danger');
+                        statusContainer.classList.remove('text-success');
+                    });
+            } else {
+                // Requisições por região
+                let promessas = filtros.map(region => fetch(`${API_BASE}/api/drone-data/realtime/${region}`)
+                    .then(response => {
+                        if (response.status === 200) {
+                            statusElement.textContent = 'Online';
+                            statusContainer.style.backgroundColor = '#d4edda';
+                            statusContainer.classList.remove('text-danger');
+                            statusContainer.classList.add('text-success');
+                            return response.json();
+                        } else {
+                            throw new Error('Erro na requisição');
+                        }
+                    })
+                    .catch(() => null)
+                );
+                Promise.all(promessas).then(respostas => {
+                    // Filtra respostas válidas
+                    const dadosValidos = respostas.filter(r => r && !r.err);
+                    let items = [];
+                    dadosValidos.forEach(r => {
+                        if (r.content && r.content.items) {
+                            items = items.concat(r.content.items);
+                        }
+                    });
+                    const count = items.length;
+                    document.getElementById('totalDadosMqtt').textContent = count;
+                    // Totais por elemento
+                    let totalTemperatura = 0, totalUmidade = 0, totalPressao = 0, totalRadiacao = 0;
+                    let regiaoMap = {Temperatura: {}, Umidade: {}, Pressao: {}, Radiacao: {}};
+                    regioes.forEach(r => {
+                        regiaoMap.Temperatura[r] = 0;
+                        regiaoMap.Umidade[r] = 0;
+                        regiaoMap.Pressao[r] = 0;
+                        regiaoMap.Radiacao[r] = 0;
+                    });
+                    items.forEach(item => {
+                        totalTemperatura += item.temp;
+                        totalUmidade += item.umidade;
+                        totalPressao += item.pressao;
+                        totalRadiacao += item.radiacao;
+                        if (regioes.includes(item.regiao)) {
+                            regiaoMap.Temperatura[item.regiao] += item.temp;
+                            regiaoMap.Umidade[item.regiao] += item.umidade;
+                            regiaoMap.Pressao[item.regiao] += item.pressao;
+                            regiaoMap.Radiacao[item.regiao] += item.radiacao;
+                        }
+                    });
+                    document.getElementById('totalTemperaturaMqtt').textContent = totalTemperatura;
+                    document.getElementById('totalUmidadeMqtt').textContent = totalUmidade;
+                    document.getElementById('totalPressaoMqtt').textContent = totalPressao;
+                    document.getElementById('totalRadiacaoMqtt').textContent = totalRadiacao;
+                    // Percentuais por região
+                    function calcPercent(map, total) {
+                        return regioes.map(r => total ? Math.round((map[r] / total) * 100) : 0);
+                    }
+                    chartTemperatura.data.datasets[0].data = calcPercent(regiaoMap.Temperatura, totalTemperatura);
+                    chartTemperatura.update();
+                    chartUmidade.data.datasets[0].data = calcPercent(regiaoMap.Umidade, totalUmidade);
+                    chartUmidade.update();
+                    chartPressao.data.datasets[0].data = calcPercent(regiaoMap.Pressao, totalPressao);
+                    chartPressao.update();
+                    chartRadiacao.data.datasets[0].data = calcPercent(regiaoMap.Radiacao, totalRadiacao);
+                    chartRadiacao.update();
+                }).catch(() => {
+                    statusElement.textContent = 'Erro na conexão MQTT';
+                    statusContainer.style.backgroundColor = '#f8d7da';
+                    statusContainer.classList.add('text-danger');
+                    statusContainer.classList.remove('text-success');
+                });
+            }
+        }
+        setInterval(atualizarDashboardMqtt, 2000);
+        atualizarDashboardMqtt();
+        // Adiciona lógica JS para o checkbox "all"
+        function syncAllCheckbox(tab) {
+            const allId = tab === 'mqtt' ? 'regAllMqtt' : 'regAllRabbit';
+            const prefix = tab === 'mqtt' ? 'reg' : 'reg';
+            const regioes = ['Norte', 'Sul', 'Leste', 'Oeste'];
+            const allCb = document.getElementById(allId);
+            const cbs = regioes.map(r => document.getElementById(prefix + r + (tab === 'mqtt' ? 'Mqtt' : 'Rabbit')));
+            allCb.addEventListener('change', function() {
+                cbs.forEach(cb => cb.checked = allCb.checked);
+                if (tab === 'mqtt') atualizarDashboardMqtt(); else atualizarDashboardRabbit();
+            });
+            cbs.forEach(cb => {
+                cb.addEventListener('change', function() {
+                    if (cbs.every(cb => cb.checked)) {
+                        allCb.checked = true;
+                    } else {
+                        allCb.checked = false;
+                    }
+                    if (tab === 'mqtt') atualizarDashboardMqtt(); else atualizarDashboardRabbit();
+                });
+            });
+        }
+        syncAllCheckbox('mqtt');
+        syncAllCheckbox('rabbit');
+
+        // RabbitMQ - atualização manual
+        const chartTempHistoricoRabbit = new Chart(document.getElementById('chartTempHistoricoRabbit'), {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{ label: 'Temperatura', data: [], borderColor: '#ff6384', fill: false }]
+            },
+            options: { scales: { x: { title: { display: true, text: 'Tempo' } }, y: { title: { display: true, text: 'Valor' } } } }
+        });
+        const chartUmidHistoricoRabbit = new Chart(document.getElementById('chartUmidHistoricoRabbit'), {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{ label: 'Umidade', data: [], borderColor: '#36a2eb', fill: false }]
+            },
+            options: { scales: { x: { title: { display: true, text: 'Tempo' } }, y: { title: { display: true, text: 'Valor' } } } }
+        });
+        const chartPressHistoricoRabbit = new Chart(document.getElementById('chartPressHistoricoRabbit'), {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{ label: 'Pressão', data: [], borderColor: '#ffce56', fill: false }]
+            },
+            options: { scales: { x: { title: { display: true, text: 'Tempo' } }, y: { title: { display: true, text: 'Valor' } } } }
+        });
+        const chartRadHistoricoRabbit = new Chart(document.getElementById('chartRadHistoricoRabbit'), {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [{ label: 'Radiação', data: [], borderColor: '#4bc0c0', fill: false }]
+            },
+            options: { scales: { x: { title: { display: true, text: 'Tempo' } }, y: { title: { display: true, text: 'Valor' } } } }
+        });
+
+        function atualizarDashboardRabbit() {
+            const statusContainer = document.getElementById('statusContainerRabbit');
+            const statusElement = document.getElementById('statusRabbit');
+            const regioes = ['Norte', 'Sul', 'Leste', 'Oeste'];
+            // Filtros selecionados
+            const filtros = regioes.filter(r => document.getElementById('reg'+r+'Rabbit').checked);
+            let endpoint;
+            if (filtros.length === 0) {
+                // Limpa dashboard se nada selecionado
+                document.getElementById('totalDadosRabbit').textContent = 0;
+                document.getElementById('totalTemperaturaRabbit').textContent = 0;
+                document.getElementById('totalUmidadeRabbit').textContent = 0;
+                document.getElementById('totalPressaoRabbit').textContent = 0;
+                document.getElementById('totalRadiacaoRabbit').textContent = 0;
+                chartTempHistoricoRabbit.data.labels = [];
+                chartTempHistoricoRabbit.data.datasets[0].data = [];
+                chartTempHistoricoRabbit.update();
+                chartUmidHistoricoRabbit.data.labels = [];
+                chartUmidHistoricoRabbit.data.datasets[0].data = [];
+                chartUmidHistoricoRabbit.update();
+                chartPressHistoricoRabbit.data.labels = [];
+                chartPressHistoricoRabbit.data.datasets[0].data = [];
+                chartPressHistoricoRabbit.update();
+                chartRadHistoricoRabbit.data.labels = [];
+                chartRadHistoricoRabbit.data.datasets[0].data = [];
+                chartRadHistoricoRabbit.update();
+                return;
+            }
+            if (filtros.length === regioes.length) {
+                endpoint = API_BASE + '/api/drone-data/history/all';
+                fetch(endpoint)
+                    .then(response => {
+                        if (response.status === 200) {
+                            statusElement.textContent = 'Online';
+                            statusContainer.style.backgroundColor = '#d4edda';
+                            statusContainer.classList.remove('text-danger');
+                            statusContainer.classList.add('text-success');
+                            return response.json();
+                        } else {
+                            throw new Error('Erro na requisição');
+                        }
+                    })
+                    .then(apiResponse => {
+                        if (apiResponse.error) {
+                            statusElement.textContent = 'Erro: ' + apiResponse.error;
+                            statusContainer.style.backgroundColor = '#f8d7da';
+                            statusContainer.classList.add('text-danger');
+                            statusContainer.classList.remove('text-success');
+                            return;
+                        }
+                        const items = apiResponse.content.items || [];
+                        const count = items.length;
+                        document.getElementById('totalDadosRabbit').textContent = count;
+                        // Totais por elemento
+                        let totalTemperatura = 0, totalUmidade = 0, totalPressao = 0, totalRadiacao = 0;
+                        let historicoTempo = [], historicoTemperatura = [], historicoUmidade = [], historicoPressao = [], historicoRadiacao = [];
+                        let regiaoMap = {Temperatura: {}, Umidade: {}, Pressao: {}, Radiacao: {}};
+                        regioes.forEach(r => {
+                            regiaoMap.Temperatura[r] = 0;
+                            regiaoMap.Umidade[r] = 0;
+                            regiaoMap.Pressao[r] = 0;
+                            regiaoMap.Radiacao[r] = 0;
+                        });
+                        items.forEach((item, idx) => {
+                            totalTemperatura += item.temp;
+                            totalUmidade += item.umidade;
+                            totalPressao += item.pressao;
+                            totalRadiacao += item.radiacao;
+                            historicoTempo.push(idx+1);
+                            historicoTemperatura.push(item.temp);
+                            historicoUmidade.push(item.umidade);
+                            historicoPressao.push(item.pressao);
+                            historicoRadiacao.push(item.radiacao);
+                            if (regioes.includes(item.regiao)) {
+                                regiaoMap.Temperatura[item.regiao] += item.temp;
+                                regiaoMap.Umidade[item.regiao] += item.umidade;
+                                regiaoMap.Pressao[item.regiao] += item.pressao;
+                                regiaoMap.Radiacao[item.regiao] += item.radiacao;
+                            }
+                        });
+                        document.getElementById('totalTemperaturaRabbit').textContent = totalTemperatura;
+                        document.getElementById('totalUmidadeRabbit').textContent = totalUmidade;
+                        document.getElementById('totalPressaoRabbit').textContent = totalPressao;
+                        document.getElementById('totalRadiacaoRabbit').textContent = totalRadiacao;
+                        chartTempHistoricoRabbit.data.labels = historicoTempo;
+                        chartTempHistoricoRabbit.data.datasets[0].data = historicoTemperatura;
+                        chartTempHistoricoRabbit.update();
+                        chartUmidHistoricoRabbit.data.labels = historicoTempo;
+                        chartUmidHistoricoRabbit.data.datasets[0].data = historicoUmidade;
+                        chartUmidHistoricoRabbit.update();
+                        chartPressHistoricoRabbit.data.labels = historicoTempo;
+                        chartPressHistoricoRabbit.data.datasets[0].data = historicoPressao;
+                        chartPressHistoricoRabbit.update();
+                        chartRadHistoricoRabbit.data.labels = historicoTempo;
+                        chartRadHistoricoRabbit.data.datasets[0].data = historicoRadiacao;
+                        chartRadHistoricoRabbit.update();
+                    })
+                    .catch(() => {
+                        statusElement.textContent = 'Erro na conexão RabbitMQ';
+                        statusContainer.style.backgroundColor = '#f8d7da';
+                        statusContainer.classList.add('text-danger');
+                        statusContainer.classList.remove('text-success');
+                    });
+            } else {
+                // Requisições por região
+                let promessas = filtros.map(region => fetch(`${API_BASE}/api/drone-data/history/${region}`)
+                    .then(response => {
+                        if (response.status === 200) {
+                            statusElement.textContent = 'Online';
+                            statusContainer.style.backgroundColor = '#d4edda';
+                            statusContainer.classList.remove('text-danger');
+                            statusContainer.classList.add('text-success');
+                            return response.json();
+                        } else {
+                            throw new Error('Erro na requisição');
+                        }
+                    })
+                    .catch(() => null)
+                );
+                Promise.all(promessas).then(respostas => {
+                    // Filtra respostas válidas
+                    const dadosValidos = respostas.filter(r => r && !r.error);
+                    let items = [];
+                    dadosValidos.forEach(r => {
+                        if (r.content && r.content.items) {
+                            items = items.concat(r.content.items);
+                        }
+                    });
+                    const count = items.length;
+                    document.getElementById('totalDadosRabbit').textContent = count;
+                    // Totais por elemento
+                    let totalTemperatura = 0, totalUmidade = 0, totalPressao = 0, totalRadiacao = 0;
+                    let historicoTempo = [], historicoTemperatura = [], historicoUmidade = [], historicoPressao = [], historicoRadiacao = [];
+                    let regiaoMap = {Temperatura: {}, Umidade: {}, Pressao: {}, Radiacao: {}};
+                    regioes.forEach(r => {
+                        regiaoMap.Temperatura[r] = 0;
+                        regiaoMap.Umidade[r] = 0;
+                        regiaoMap.Pressao[r] = 0;
+                        regiaoMap.Radiacao[r] = 0;
+                    });
+                    items.forEach((item, idx) => {
+                        totalTemperatura += item.temp;
+                        totalUmidade += item.umidade;
+                        totalPressao += item.pressao;
+                        totalRadiacao += item.radiacao;
+                        historicoTempo.push(idx+1);
+                        historicoTemperatura.push(item.temp);
+                        historicoUmidade.push(item.umidade);
+                        historicoPressao.push(item.pressao);
+                        historicoRadiacao.push(item.radiacao);
+                        if (regioes.includes(item.regiao)) {
+                            regiaoMap.Temperatura[item.regiao] += item.temp;
+                            regiaoMap.Umidade[item.regiao] += item.umidade;
+                            regiaoMap.Pressao[item.regiao] += item.pressao;
+                            regiaoMap.Radiacao[item.regiao] += item.radiacao;
+                        }
+                    });
+                    document.getElementById('totalTemperaturaRabbit').textContent = totalTemperatura;
+                    document.getElementById('totalUmidadeRabbit').textContent = totalUmidade;
+                    document.getElementById('totalPressaoRabbit').textContent = totalPressao;
+                    document.getElementById('totalRadiacaoRabbit').textContent = totalRadiacao;
+                    chartTempHistoricoRabbit.data.labels = historicoTempo;
+                    chartTempHistoricoRabbit.data.datasets[0].data = historicoTemperatura;
+                    chartTempHistoricoRabbit.update();
+                    chartUmidHistoricoRabbit.data.labels = historicoTempo;
+                    chartUmidHistoricoRabbit.data.datasets[0].data = historicoUmidade;
+                    chartUmidHistoricoRabbit.update();
+                    chartPressHistoricoRabbit.data.labels = historicoTempo;
+                    chartPressHistoricoRabbit.data.datasets[0].data = historicoPressao;
+                    chartPressHistoricoRabbit.update();
+                    chartRadHistoricoRabbit.data.labels = historicoTempo;
+                    chartRadHistoricoRabbit.data.datasets[0].data = historicoRadiacao;
+                    chartRadHistoricoRabbit.update();
+                }).catch(() => {
+                    statusElement.textContent = 'Erro na conexão RabbitMQ';
+                    statusContainer.style.backgroundColor = '#f8d7da';
+                    statusContainer.classList.add('text-danger');
+                    statusContainer.classList.remove('text-success');
+                });
+            }
+        }
+        document.getElementById('btnAtualizarRabbit').addEventListener('click', atualizarDashboardRabbit);
+        // Atualiza dashboard ao mudar filtros
+        if (document.querySelectorAll('#filtrosRegiaoMqtt input[type=checkbox]').length) {
+            document.querySelectorAll('#filtrosRegiaoMqtt input[type=checkbox]').forEach(cb => {
+                cb.addEventListener('change', atualizarDashboardMqtt);
+            });
+        }
+        if (document.querySelectorAll('#filtrosRegiaoRabbit input[type=checkbox]').length) {
+            document.querySelectorAll('#filtrosRegiaoRabbit input[type=checkbox]').forEach(cb => {
+                cb.addEventListener('change', atualizarDashboardRabbit);
+            });
+        }
+    </script>
+</body>
+</html>
