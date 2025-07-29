@@ -4,7 +4,6 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Scanner;
 
@@ -69,25 +68,9 @@ public class Drone {
         }
     }
 
-    private void sendDataRest() {
-        DroneData data = collectData();
-        RestTemplate restTemplate = new RestTemplate();
-        String gatewayUrl = "http://localhost:8080/drone-data"; // ajuste conforme necessário
-        try {
-            restTemplate.postForEntity(gatewayUrl, data, Void.class);
-            System.out.println("Dados enviados via REST para o Gateway.");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void run(int modoEnvio) throws InterruptedException, MqttException {
+    public void run() throws InterruptedException, MqttException {
         while (true) {
-            if (modoEnvio == 1) {
-                sendData();
-            } else {
-                sendDataRest();
-            }
+            sendData();
             Thread.sleep((long) Math.floor(2000 + Math.random() * 3000));
         }
         // client.disconnect();
@@ -96,9 +79,6 @@ public class Drone {
     public static void main(String[] args) throws Exception {
         Scanner s = new Scanner(System.in);
         String broker = "tcp://broker.emqx.io:1883";
-
-        System.out.print("Broker: " + broker + "\n");
-        // broker = s.nextLine();
 
         System.out.println("Escolha a região do drone");
         System.out.println("1 - NORTE");
@@ -130,13 +110,8 @@ public class Drone {
             }
         }
 
-        System.out.println("Escolha o modo de envio:");
-        System.out.println("1 - MQTT");
-        System.out.println("2 - REST");
-        int modoEnvio = s.nextInt();
-
         try {
-            drone.run(modoEnvio);
+            drone.run();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

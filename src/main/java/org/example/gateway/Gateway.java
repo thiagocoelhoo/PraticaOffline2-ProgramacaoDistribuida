@@ -19,7 +19,7 @@ public class Gateway {
     private static final String MQTT_BROKER = "tcp://broker.emqx.io:1883";
     private static final String RABBITMQ_HOST = "localhost";
 
-    private static final String GATEWAY_TO_RABBITMQ_PUBLISHER_QUEUE = "gateway_queue"; 
+    private static final String GATEWAY_TO_RABBITMQ_PUBLISHER_QUEUE = "drone_data_history"; 
     private static final String GATEWAY_TO_MQTT_PUBLISHER_TOPIC_BASE = "gateway/drone-data/"; 
     private static final String[] DRONE_SUBSCRIPTION_TOPICS = {
         "drone/NORTE",
@@ -42,7 +42,7 @@ public class Gateway {
     }
 
     public Gateway() {
-        this("localhost", 8000);
+        this("localhost", 2000);
     }
 
     private String saveData(String message) throws IOException {

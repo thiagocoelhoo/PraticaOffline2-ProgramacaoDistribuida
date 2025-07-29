@@ -69,10 +69,7 @@ public class Database {
 
     public static void main(String args[]) {
         Scanner s = new Scanner(System.in);
-        int port;
-
-        System.out.print("Porta: ");
-        port = s.nextInt();
+        int port = 2000;
 
         try {
             Database db = new Database();

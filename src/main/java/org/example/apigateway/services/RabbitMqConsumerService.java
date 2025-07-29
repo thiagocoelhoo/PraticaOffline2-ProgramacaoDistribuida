@@ -18,7 +18,7 @@ import java.util.concurrent.TimeoutException;
 @Service
 public class RabbitMqConsumerService {
     private static final String RABBITMQ_HOST = "localhost";
-    private static final String DRONE_DATA_HISTORY_QUEUE = "gateway_to_rabbitmq_publisher_queue";
+    private static final String DRONE_DATA_HISTORY_QUEUE = "drone_data_history";
 
     private Connection connection;
     private Channel channel;

@@ -78,6 +78,7 @@ public class PublisherRabbitMQ {
                 null,
                 data.getBytes()
             );
+            System.out.println("Data sent: "+data);
         } catch (IOException e) {
             e.printStackTrace();
         }

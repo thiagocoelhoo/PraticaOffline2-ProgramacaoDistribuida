@@ -22,7 +22,7 @@ public class DroneData {
 
     public static DroneData parseFromString(String dataString) {
         String cleanedString = dataString.trim().replace("[", "").replace("]", "").trim();
-        String[] parts = cleanedString.split("|");
+        String[] parts = cleanedString.split("\\|");
 
         try {
             String region = parts[0].trim();
